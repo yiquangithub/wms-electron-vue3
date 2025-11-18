@@ -18,19 +18,19 @@
 </template>
 
 <script setup>
-import iframeToggle from './IframeToggle/index'
-import useTagsViewStore from '@/store/modules/tagsView'
+import iframeToggle from "./IframeToggle/index";
+import useTagsViewStore from "@/store/modules/tagsView";
 
-const tagsViewStore = useTagsViewStore()
+const tagsViewStore = useTagsViewStore();
 </script>
 
 <style lang="scss" scoped>
 .app-main {
   /* 50= navbar  50  */
-  min-height: calc(100vh - 50px);
+  height: calc(100vh - 96px);
   width: 100%;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .fixed-header + .app-main {
@@ -40,7 +40,7 @@ const tagsViewStore = useTagsViewStore()
 .hasTagsView {
   .app-main {
     /* 84 = navbar + tags-view = 50 + 34 */
-    min-height: calc(100vh - 84px);
+    height: calc(100vh - 96px);
   }
 
   .fixed-header + .app-main {

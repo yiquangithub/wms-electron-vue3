@@ -1,24 +1,19 @@
 <template>
   <div class="navbar">
-    <hamburger
-      id="hamburger-container"
-      :is-active="appStore.sidebar.opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
-    <breadcrumb
-      id="breadcrumb-container"
-      class="breadcrumb-container"
-      v-if="!settingsStore.topNav"
-    />
     <top-nav
       id="topmenu-container"
       class="topmenu-container"
       v-if="settingsStore.topNav"
     />
-
     <div class="right-menu">
       <template v-if="appStore.device !== 'mobile'">
+        <div class="right-menu-item2" @click="handleHomeClick">
+          <el-tooltip content="返回首页" effect="dark" placement="bottom">
+            <el-icon size="28">
+              <HomeFilled />
+            </el-icon>
+          </el-tooltip>
+        </div>
         <header-search id="header-search" class="right-menu-item" />
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
@@ -70,6 +65,8 @@ import RuoYiDoc from "@/components/RuoYi/Doc";
 import useAppStore from "@/store/modules/app";
 import useUserStore from "@/store/modules/user";
 import useSettingsStore from "@/store/modules/settings";
+import { HomeFilled } from "@element-plus/icons-vue";
+import router from "@/router";
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -110,6 +107,10 @@ const emits = defineEmits(["setLayout"]);
 function setLayout() {
   emits("setLayout");
 }
+
+function handleHomeClick() {
+  router.push({ path: "/index" });
+}
 </script>
 
 <style lang="scss" scoped>
@@ -117,8 +118,8 @@ function setLayout() {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #fff;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  background: #304156;
 
   .hamburger-container {
     line-height: 46px;
@@ -162,8 +163,24 @@ function setLayout() {
       padding: 0 8px;
       height: 100%;
       font-size: 18px;
-      color: #5a5e66;
+      color: #fff;
       vertical-align: text-bottom;
+
+      &.hover-effect {
+        cursor: pointer;
+        transition: background 0.3s;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.025);
+        }
+      }
+    }
+
+    .right-menu-item2 {
+      color: #fff;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
 
       &.hover-effect {
         cursor: pointer;

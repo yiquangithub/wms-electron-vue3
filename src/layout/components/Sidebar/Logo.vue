@@ -1,61 +1,96 @@
 <template>
-  <div class="sidebar-logo-container" :class="{ 'collapse': collapse }" :style="{ backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
+  <div
+    class="sidebar-logo-container"
+    :class="{ collapse: collapse }"
+    :style="{
+      backgroundColor:
+        sideTheme === 'theme-dark'
+          ? variables.menuBackground
+          : variables.menuLightBackground,
+    }"
+  >
     <transition name="sidebarLogoFade">
-      <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
+      <router-link
+        v-if="collapse"
+        key="collapse"
+        class="sidebar-logo-link"
+        to="/"
+      >
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 v-else class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }}</h1>
+        <h1
+          v-else
+          class="sidebar-title"
+          :style="{
+            color:
+              sideTheme === 'theme-dark'
+                ? variables.logoTitleColor
+                : variables.logoLightTitleColor,
+          }"
+        >
+          {{ title }}
+        </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }}</h1>
+        <h1
+          class="sidebar-title"
+          :style="{
+            color:
+              sideTheme === 'theme-dark'
+                ? variables.logoTitleColor
+                : variables.logoLightTitleColor,
+          }"
+        >
+          {{ title }}
+        </h1>
       </router-link>
     </transition>
   </div>
 </template>
 
 <script setup>
-import variables from '@/assets/styles/variables.module.scss'
-import defaultLogo from '@/assets/logo/logo.png'
-import { getSystemConfig } from '@/utils/systemConfig'
-import useSettingsStore from '@/store/modules/settings'
-import { ref, onMounted, computed } from 'vue'
+import variables from "@/assets/styles/variables.module.scss";
+import defaultLogo from "@/assets/logo/logo.png";
+import { getSystemConfig } from "@/utils/systemConfig";
+import useSettingsStore from "@/store/modules/settings";
+import { ref, onMounted, computed } from "vue";
 
 defineProps({
   collapse: {
     type: Boolean,
-    required: true
-  }
-})
+    required: true,
+  },
+});
 
-const settingsStore = useSettingsStore()
-const sideTheme = computed(() => settingsStore.sideTheme)
+const settingsStore = useSettingsStore();
+const sideTheme = computed(() => settingsStore.sideTheme);
 
 // 默认数据
-const title = ref(import.meta.env.VITE_APP_TITLE)
-const logo = ref(defaultLogo)
+const title = ref(import.meta.env.VITE_APP_TITLE);
+const logo = ref(defaultLogo);
 
 // 加载系统配置
 const loadSystemConfig = () => {
-  const systemConfig = getSystemConfig()
+  const systemConfig = getSystemConfig();
   if (systemConfig) {
     if (systemConfig.simpleName) {
-      title.value = systemConfig.simpleName
+      title.value = systemConfig.simpleName;
     }
     if (systemConfig.logo) {
-      logo.value = systemConfig.logo
+      logo.value = systemConfig.logo;
     }
   }
-}
+};
 
 onMounted(() => {
-  loadSystemConfig()
+  loadSystemConfig();
   // 监听localStorage变化
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'systemConfig') {
-      loadSystemConfig()
+  window.addEventListener("storage", (e) => {
+    if (e.key === "systemConfig") {
+      loadSystemConfig();
     }
-  })
-})
+  });
+});
 </script>
 
 <style lang="scss" scoped>

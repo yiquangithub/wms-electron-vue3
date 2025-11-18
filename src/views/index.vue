@@ -1,635 +1,644 @@
 <template>
-  <div class="dashboard-page">
-    <!-- 欢迎区域 -->
-    <section class="welcome-card">
-      <div class="user-info-section">
-        <img
-          class="user-avatar"
-          :src="userStore.avatar"
-          alt="User Avatar"
-          @error="handleAvatarError"
-        />
-        <div class="user-details">
-          <h1 class="welcome-title">{{ greeting }}，{{ userStore.name }}！</h1>
-          <p class="welcome-tip">{{ welcomeTip }}</p>
-          <p class="welcome-time">{{ currentDate }}</p>
-        </div>
+  <div class="wms-home-page">
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="header-left">
+        <el-icon class="logo-icon" :size="32"><Goods /></el-icon>
+        <span class="system-title">智能垂直回转柜</span>
       </div>
-    </section>
+      <div class="header-right">
+        <div class="time-display">
+          <el-icon><Clock /></el-icon>
+          <span>{{ currentTime }}</span>
+        </div>
+        <el-dropdown @command="handleUserCommand">
+          <div class="user-info">
+            <img :src="userStore.avatar" class="user-avatar" />
+            <span>管理员</span>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <router-link to="/user/profile">
+                <el-dropdown-item>个人中心</el-dropdown-item>
+              </router-link>
+              <el-dropdown-item command="logout" divided
+                >退出登录</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+    </header>
 
-    <section class="data-summary-grid">
-      <div class="summary-card">
-        <div class="card-content">
-          <p class="card-title">总项目数</p>
-          <p class="card-number">{{ summary?.projectNum }}</p>
-          <div class="card-trend trend-up">
-            <el-icon><CaretTop /></el-icon>
-            <span>{{ summary?.projectMoM }}% 较上月</span>
-          </div>
-        </div>
-        <div class="card-icon-wrapper" style="background-color: #409eff">
-          <el-icon><Suitcase /></el-icon>
-        </div>
-      </div>
-      <div class="summary-card">
-        <div class="card-content">
-          <p class="card-title">进行中项目</p>
-          <p class="card-number">{{ summary?.inProgressNum }}</p>
-          <div class="card-trend trend-down">
-            <el-icon><CaretBottom /></el-icon>
-            <span>{{ summary?.inProgressMoM }}% 较上月</span>
-          </div>
-        </div>
-        <div class="card-icon-wrapper" style="background-color: #e6a23c">
-          <el-icon><Loading /></el-icon>
-        </div>
-      </div>
-      <div class="summary-card">
-        <div class="card-content">
-          <p class="card-title">本月采购额</p>
-          <p class="card-number">¥{{ summary?.currentPurchaseAmount }}</p>
-          <div class="card-trend trend-up">
-            <el-icon><CaretTop /></el-icon>
-            <span>{{ summary?.purchaseAmountMoM }}% 较上月</span>
-          </div>
-        </div>
-        <div class="card-icon-wrapper" style="background-color: #67c23a">
-          <el-icon><ShoppingCart /></el-icon>
-        </div>
-      </div>
-      <div class="summary-card">
-        <div class="card-content">
-          <p class="card-title">库存总量</p>
-          <p class="card-number">{{ summary?.inventoryNum }}</p>
-          <div class="card-trend trend-down">
-            <el-icon><CaretBottom /></el-icon>
-            <span>{{ summary?.inventoryNumMoM }}% 较上月</span>
-          </div>
-        </div>
-        <div class="card-icon-wrapper" style="background-color: #909399">
-          <el-icon><Box /></el-icon>
-        </div>
-      </div>
-    </section>
-    <div class="dashboard-content">
-      <div class="chart-card">
-        <h3 class="card-section-title">项目进度趋势</h3>
-        <div ref="progressChart" class="chart-container"></div>
-      </div>
-      <div class="chart-card">
-        <h3 class="card-section-title">项目状态分布</h3>
-        <div class="chart-content-flex">
-          <div ref="statusChart" class="chart-container"></div>
-          <div class="status-details">
-            <div
-              class="status-item"
-              v-for="item in projectsStatus"
-              :key="item.name"
-            >
-              <span
-                class="status-dot"
-                :style="{ backgroundColor: getColorByName(item.name) }"
-              ></span>
-              <span>{{ item.name }}</span>
-              <span class="status-count">{{ item.value }} 个项目</span>
-              <span class="status-percent">{{
-                getPercentage(item.value)
-              }}</span>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <div class="welcome-content">
+          <div class="welcome-left">
+            <h1 class="welcome-title">欢迎使用智能垂直回转柜</h1>
+            <p class="welcome-desc">
+              请选择以下功能模块进行操作，点击模块图标打开对应功能
+            </p>
+            <div class="system-status">
+              <div class="status-item">
+                <span class="status-dot"></span>
+                <span>系统运行正常</span>
+              </div>
+              <div class="status-item">
+                <el-icon><Calendar /></el-icon>
+                <span>今日已处理 156 笔业务</span>
+              </div>
             </div>
           </div>
+          <div class="welcome-right">
+            <div class="stat-number">13</div>
+            <div class="stat-label">在库数量</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="dashboard-content chart-full-width">
-      <div class="chart-card">
-        <h3 class="card-section-title">财务收支趋势</h3>
-        <div ref="financeChart" class="chart-container max-chart"></div>
+
+      <!-- Menu Grid -->
+      <div class="menu-grid">
+        <div
+          v-for="item in menuItems"
+          :key="item.id"
+          class="menu-card"
+          @click="handleMenuClick(item)"
+        >
+          <div class="menu-icon">
+            <component :is="item.icon" />
+          </div>
+          <div class="menu-info">
+            <h3 class="menu-title">{{ item.title }}</h3>
+            <p class="menu-desc">{{ item.desc }}</p>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
+
+    <!-- Bottom Status Bar -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <div class="status-info">
+          <span class="status-label">货柜编号:</span>
+          <span class="status-value primary">A01</span>
+        </div>
+        <div class="status-info">
+          <span class="status-label">运行:</span>
+          <span class="status-value success">0时11分</span>
+        </div>
+        <div class="status-info">
+          <span class="status-label">PLC通信:</span>
+          <span class="status-value success">
+            <span class="status-indicator"></span>
+            正常
+          </span>
+        </div>
+      </div>
+      <div class="status-right">
+        <div class="status-info">
+          <span class="status-label">库存量:</span>
+          <span class="status-value">12547</span>
+        </div>
+        <div class="status-info">
+          <span class="status-label">今日入库量:</span>
+          <span class="status-value info">100</span>
+        </div>
+        <div class="status-info">
+          <span class="status-label">今日出库量:</span>
+          <span class="status-value warning">125</span>
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import * as echarts from "echarts";
+import { ref, onMounted, onUnmounted } from "vue";
 import {
-  Suitcase,
-  Loading,
-  ShoppingCart,
-  Box,
-  CaretTop,
-  CaretBottom,
-  Search,
+  Goods,
+  Clock,
   Bell,
+  User,
+  Calendar,
   Setting,
+  Lock,
+  Box,
+  TrendCharts,
+  Upload,
+  Download,
+  DataAnalysis,
+  Warning,
 } from "@element-plus/icons-vue";
-import {
-  getSummary,
-  getProgress,
-  getProjectsStatus,
-  getFinancialStatus,
-} from "@/api/index";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { useRouter } from "vue-router";
 import useUserStore from "@/store/modules/user";
+import usePermissionStore from "@/store/modules/permission";
+
+const permissionStore = usePermissionStore();
+const router = useRouter();
 const userStore = useUserStore();
-console.log(userStore);
-// 响应式数据
-const welcomeTip = ref("分身有术，高效执行！");
-const currentDate = ref("");
-const greeting = ref("");
-const financeChart = ref(null);
-const progressChart = ref(null);
-const statusChart = ref(null);
 
-const setGreetingAndDate = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) {
-    greeting.value = "上午好";
-  } else if (hour < 18) {
-    greeting.value = "下午好";
-  } else {
-    greeting.value = "晚上好";
-  }
+// 当前时间
+const currentTime = ref("");
+let timer = null;
 
-  const options = {
+const updateTime = () => {
+  const now = new Date();
+  currentTime.value = now.toLocaleString("zh-CN", {
     year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "long",
-  };
-  currentDate.value = new Date().toLocaleDateString("zh-CN", options);
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 };
 
-onMounted(async () => {
-  setGreetingAndDate();
+// 菜单项配置
+const menuItems = ref([
+  {
+    id: 1,
+    icon: Setting,
+    title: "系统设置",
+    desc: "用户账号管理与操作权限控制",
+    path: "/system/user", // 跳转路径
+    name: "System", // 模块路径，用于侧边栏显示
+  },
+  {
+    id: 2,
+    icon: Lock,
+    title: "安全管理",
+    desc: "用户账号管理与操作权限控制",
+    path: "/system/role",
+    name: "/system",
+  },
+  {
+    id: 3,
+    icon: Box,
+    title: "物料管理",
+    desc: "物料信息维护与分类编码管理",
+    path: "/material/list",
+    name: "/material",
+  },
+  {
+    id: 4,
+    icon: TrendCharts,
+    title: "货柜管理",
+    desc: "存储货位划分与状态实时监控",
+    path: "/cabinet/list",
+    name: "/cabinet",
+  },
+  {
+    id: 5,
+    icon: Upload,
+    title: "入库管理",
+    desc: "采购到货登记与库位分配操作",
+    path: "/warehouse/inbound",
+    name: "/warehouse",
+  },
+  {
+    id: 6,
+    icon: Download,
+    title: "出库管理",
+    desc: "查询物料所在库位并出库操作",
+    path: "/warehouse/outbound",
+    name: "/warehouse",
+  },
+  {
+    id: 7,
+    icon: DataAnalysis,
+    title: "盘点管理",
+    desc: "定期库存清点与差异调整处理",
+    path: "/warehouse/inventory",
+    name: "/warehouse",
+  },
+  {
+    id: 8,
+    icon: Warning,
+    title: "警告信息",
+    desc: "库存预警与常态实时提醒",
+    path: "/monitor/operlog", // 示例路径
+    name: "/monitor",
+  },
+]);
 
-  await getSummaryHandler(); //项目数统计信息
-  await getProjectsStatusHandler(); // 项目状态分布
-  await getFinancialStatusHandler(); // 财务收支趋势
-  await getProgressHandler(); // 项目进度趋势
+// 事件处理
+const handleNotification = () => {
+  ElMessage.info("暂无新通知");
+};
 
-  window.addEventListener("resize", () => {
-    echarts.getInstanceByDom(financeChart.value)?.resize();
-    echarts.getInstanceByDom(progressChart.value)?.resize();
-    echarts.getInstanceByDom(statusChart.value)?.resize();
-  });
+const handleUserCommand = (command) => {
+  if (command === "logout") {
+    handleLogout();
+  } else if (command === "profile") {
+    ElMessage.info("个人中心");
+  }
+};
+
+const handleMenuClick = async (item) => {
+  permissionStore.setCurrentModuleRoutes(item.name);
+  router.push(item.path);
+};
+
+const handleLogout = () => {
+  ElMessageBox.confirm("确定注销并退出系统吗？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
+  })
+    .then(() => {
+      userStore.logOut().then(() => {
+        location.href = "/login";
+      });
+    })
+    .catch(() => {});
+};
+
+// 生命周期
+onMounted(() => {
+  updateTime();
+  timer = setInterval(updateTime, 1000);
 });
 
-// 项目数统计信息
-const summary = ref();
-const getSummaryHandler = () => {
-  getSummary().then((response) => {
-    summary.value = response.data;
-  });
-};
-// 项目状态分布
-const projectsStatus = ref();
-const colorMap = {
-  进行中: "#409eff",
-  计划中: "#67c23a",
-  已完成: "#e6a23c",
-  已延期: "#f56c6c",
-  暂停中: "#909399",
-  未开始: "#909399",
-  已逾期: "#f56c6c",
-};
-const getColorByName = (name) => {
-  return colorMap[name] || "#909399"; // 默认灰色
-};
-const getPercentage = (value) => {
-  if (!projectsStatus.value || projectsStatus.value.length === 0) return "0%";
-  const total = projectsStatus.value.reduce(
-    (sum, item) => sum + parseInt(item.value || "0", 10),
-    0
-  );
-  if (total === 0) return "0%";
-  const percentage = (parseInt(value || "0", 10) / total) * 100;
-  return `${percentage.toFixed(0)}%`;
-};
-const getProjectsStatusHandler = () => {
-  getProjectsStatus().then((response) => {
-    projectsStatus.value = response.data.map((item) => ({
-      name: item.name,
-      value: parseInt(item.value, 10) || 0,
-    }));
-    initStateChart();
-  });
-};
-// 项目状态图表配置
-const initStateChart = () => {
-  const chart = echarts.init(statusChart.value);
-  const option = {
-    tooltip: {
-      trigger: "item",
-      formatter: "{a} <br/>{b}: {c} ({d}%)",
-    },
-    series: [
-      {
-        name: "项目状态",
-        type: "pie",
-        radius: ["40%", "70%"],
-        avoidLabelOverlap: false,
-        itemStyle: {
-          borderRadius: 5,
-          borderColor: "#fff",
-          borderWidth: 2,
-        },
-        label: {
-          show: true,
-          position: "center",
-          formatter: (params) => {
-            // 计算总数
-            const total = projectsStatus.value.reduce(
-              (sum, item) => sum + item.value,
-              0
-            );
-            return `{title|总计项目}\n\n{value|${total}}`;
-          },
-          rich: {
-            title: {
-              fontSize: 14,
-              fontWeight: "normal",
-              color: "#909399",
-            },
-            value: {
-              fontSize: 28,
-              fontWeight: "bold",
-              color: "#303133",
-              padding: [5, 0],
-            },
-          },
-        },
-        labelLine: {
-          show: false,
-        },
-        data: projectsStatus.value,
-      },
-    ],
-  };
-  chart.setOption(option);
-};
-
-// 项目进度趋势
-const progressData = ref();
-const getProgressHandler = () => {
-  getProgress().then((res) => {
-    progressData.value = res.data;
-    initProgressChart();
-  });
-};
-// 项目进度图表配置
-const initProgressChart = () => {
-  if (!progressData.value) {
-    return;
-  }
-  const chart = echarts.init(progressChart.value);
-  const series = progressData.value.seriesDataAry.map((item, index) => {
-    const numericValues = item.values.map((value) => parseFloat(value));
-    const colors = ["#409eff", "#67c23a", "#e6a23c", "#f56c6c", "#909399"];
-    const color = colors[index % colors.length];
-    return {
-      name: item.name,
-      type: "line",
-      data: numericValues,
-      smooth: true,
-      itemStyle: { color: color },
-      areaStyle: {
-        opacity: 0.1,
-        color: color,
-      },
-    };
-  });
-  const legendData = progressData.value.seriesDataAry.map((item) => item.name);
-  const option = {
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "shadow",
-      },
-      backgroundColor: "rgba(255, 255, 255, 0.9)",
-      borderColor: "#eee",
-      textStyle: {
-        color: "#333",
-      },
-    },
-    legend: {
-      data: legendData,
-      right: 10,
-      left: 10,
-      top: 0,
-      type: "scroll", // 启用滚动
-      pageButtonItemGap: 5,
-      pageButtonPosition: "end",
-    },
-    grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true,
-    },
-    xAxis: {
-      type: "category",
-      boundaryGap: false,
-      data: progressData.value.xaxisData,
-      axisLabel: {
-        color: "#999",
-      },
-      axisLine: {
-        lineStyle: {
-          color: "#eee",
-        },
-      },
-    },
-    yAxis: {
-      type: "value",
-      axisLabel: {
-        color: "#999",
-        formatter: "{value} %",
-      },
-      splitLine: {
-        lineStyle: {
-          type: "dashed",
-          color: "#eee",
-        },
-      },
-    },
-    series: series,
-  };
-  chart.setOption(option);
-};
-
-// 财务收支趋势
-const financial = ref();
-const getFinancialStatusHandler = () => {
-  getFinancialStatus().then((res) => {
-    financial.value = res.data;
-    initFinanceChart();
-  });
-};
-// 财务收支图表配置
-const initFinanceChart = () => {
-  if (!financeChart.value || !financial.value) {
-    return;
-  }
-  const chart = echarts.init(financeChart.value);
-  const option = {
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "shadow",
-      },
-      backgroundColor: "rgba(255, 255, 255, 0.9)",
-      borderColor: "#eee",
-      textStyle: {
-        color: "#333",
-      },
-      formatter: (params) => {
-        let tooltipContent = `${params[0].axisValue}<br/>`;
-        params.forEach((param) => {
-          tooltipContent += `${param.marker}${param.seriesName}: ${param.value} K<br/>`;
-        });
-        return tooltipContent;
-      },
-    },
-    legend: {
-      data: financial.value.seriesDataAry.map((item) => item.name),
-      right: 10,
-      top: 0,
-      type: "scroll", // 启用滚动
-      pageButtonItemGap: 5,
-      pageButtonPosition: "end",
-    },
-    grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true,
-    },
-    xAxis: {
-      type: "category",
-      data: financial.value.xaxisData,
-      axisLabel: {
-        color: "#999",
-      },
-      axisLine: {
-        lineStyle: {
-          color: "#eee",
-        },
-      },
-    },
-    yAxis: {
-      type: "value",
-      axisLabel: {
-        color: "#999",
-        formatter: "{value}",
-      },
-      splitLine: {
-        lineStyle: {
-          type: "dashed",
-          color: "#eee",
-        },
-      },
-    },
-    series: financial.value.seriesDataAry.map((item) => ({
-      name: item.name,
-      type: "bar",
-      barWidth: "20%",
-      data: item.values.map((value) => parseFloat(value)),
-      itemStyle: {
-        color:
-          item.name === "收入"
-            ? "#67c23a"
-            : item.name === "支出"
-            ? "#f56c6c"
-            : "#909399",
-        borderRadius: [10, 10, 0, 0],
-      },
-    })),
-  };
-  chart.setOption(option);
-};
+onUnmounted(() => {
+  if (timer) clearInterval(timer);
+});
 </script>
 
 <style scoped lang="scss">
-.dashboard-page {
-  padding: 20px;
-  background-color: #f5f7fa;
+.wms-home-page {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);
+  color: #fff;
+  font-family: "Microsoft YaHei", sans-serif;
 }
-.welcome-card {
+
+/* Top Bar */
+.top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
-  margin-bottom: 20px;
-}
-.user-info-section {
-  display: flex;
-  align-items: center;
-  gap: 50px;
-}
-.user-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  object-fit: cover;
-  background: #fff;
-  margin-left: 20px;
-}
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
-.welcome-title {
-  font-size: 28px;
-  font-weight: 600;
-  color: #fff;
-  margin: 4px 0 0;
-}
-.welcome-tip {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 4px 0 0;
-}
-.welcome-time {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 4px 0 0;
-}
-.data-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.summary-card {
-  display: flex;
-  align-items: center;
-  padding: 20px 40px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-}
-.summary-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-}
-.card-icon-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 55px;
-  height: 55px;
-  border-radius: 8px;
-  margin-right: 12px;
-  color: white;
-  font-size: 20px;
-  .el-icon {
-    font-size: 24px;
+  padding: 12px 24px;
+  background: rgba(30, 58, 95, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .logo-icon {
+      color: #00d9ff;
+    }
+
+    .system-title {
+      font-size: 20px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #00d9ff, #0095ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .time-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #00d9ff;
+      font-size: 20px;
+      font-family: "Consolas", monospace;
+    }
+
+    .user-info {
+      margin-top: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .user-avatar {
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+      }
+
+      span {
+        font-size: 18px;
+      }
+    }
   }
 }
-.card-content {
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 217, 255, 0.3);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(0, 217, 255, 0.5);
+    }
+  }
+}
+
+/* Welcome Section */
+.welcome-section {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 149, 255, 0.3),
+    rgba(0, 217, 255, 0.2)
+  );
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  .welcome-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .welcome-left {
+    flex: 1;
+
+    .welcome-title {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0 0 16px 0;
+      background: linear-gradient(90deg, #00d9ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .welcome-desc {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.8);
+      margin: 0 0 20px 0;
+      line-height: 1.6;
+    }
+
+    .system-status {
+      display: flex;
+      gap: 24px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+
+      .status-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #00ff88;
+        animation: pulse 2s infinite;
+      }
+    }
+  }
+
+  .welcome-right {
+    text-align: right;
+
+    .stat-number {
+      font-size: 56px;
+      font-weight: bold;
+      color: #00d9ff;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+}
+
+/* Menu Grid */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.menu-card {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.6),
+    rgba(30, 58, 95, 0.4)
+  );
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-}
-.card-title {
-  font-size: 14px;
-  color: #161718;
-  margin: 0 0 4px 0;
-}
-.card-number {
-  font-size: 30px;
-  font-weight: bold;
-  color: #303133;
-  margin: 0 0 4px 0;
-}
-.card-trend {
-  display: flex;
   align-items: center;
-  font-size: 14px;
-  margin-top: 2px;
+  text-align: center;
+  gap: 16px;
+
+  &:hover {
+    transform: translateY(-8px);
+    border-color: rgba(0, 217, 255, 0.5);
+    box-shadow: 0 12px 32px rgba(0, 217, 255, 0.2);
+    background: linear-gradient(
+      135deg,
+      rgba(0, 149, 255, 0.2),
+      rgba(0, 217, 255, 0.1)
+    );
+
+    .menu-icon {
+      background: linear-gradient(135deg, #00d9ff, #0095ff);
+      transform: scale(1.1);
+    }
+  }
+
+  .menu-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #0095ff, #00d9ff);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(0, 149, 255, 0.3);
+  }
+
+  .menu-info {
+    .menu-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      color: #e2e8f0;
+    }
+
+    .menu-desc {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
 }
-.trend-up {
-  color: #67c23a;
-}
-.trend-down {
-  color: #f56c6c;
-}
-.dashboard-content {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin-bottom: 20px;
-}
-.chart-full-width {
-  grid-template-columns: 1fr;
-}
-.chart-card {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-.card-section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #303133;
-  margin-bottom: 16px;
+
+/* Status Bar */
+.status-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.chart-container {
-  width: 100%;
-  height: 280px;
-}
-.max-chart {
-  height: 380px;
-}
-.chart-actions {
-  display: flex;
-  gap: 8px;
-}
-.chart-content-flex {
-  display: flex;
-  align-items: center;
-}
-.chart-content-flex .chart-container {
-  flex: 1;
-}
-.status-details {
-  flex: 1;
-  padding-left: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.status-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+  padding: 12px 24px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(71, 85, 105, 0.5);
   font-size: 14px;
-  color: #333;
+
+  .status-left,
+  .status-right {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .status-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .status-label {
+      color: #94a3b8;
+    }
+
+    .status-value {
+      font-weight: 600;
+      color: #e2e8f0;
+
+      &.primary {
+        color: #00d9ff;
+      }
+
+      &.success {
+        color: #00ff88;
+      }
+
+      &.info {
+        color: #0095ff;
+      }
+
+      &.warning {
+        color: #ffa500;
+      }
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00ff88;
+      animation: pulse 2s infinite;
+      margin-right: 4px;
+    }
+  }
 }
-.status-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 10px;
+
+/* Animations */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
-.status-count {
-  margin-left: auto;
-  margin-right: 10px;
-  color: #141414;
+
+/* Element Plus 样式覆盖 */
+:deep(.el-button) {
+  border-color: rgba(0, 217, 255, 0.3);
+  color: #e2e8f0;
+
+  &:hover {
+    border-color: #00d9ff;
+    color: #00d9ff;
+    background: rgba(0, 217, 255, 0.1);
+  }
 }
-.status-percent {
-  color: #787373;
+
+:deep(.el-dropdown) {
+  color: #e2e8f0;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .welcome-section {
+    .welcome-content {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .welcome-right {
+      text-align: left;
+    }
+  }
+
+  .status-bar {
+    flex-direction: column;
+    gap: 16px;
+
+    .status-left,
+    .status-right {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+:deep(.el-dropdown-menu__item--divided) {
+  margin: 0;
 }
 </style>

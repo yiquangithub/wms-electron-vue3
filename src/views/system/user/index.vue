@@ -150,6 +150,7 @@
           v-loading="loading"
           :data="userList"
           @selection-change="handleSelectionChange"
+          class="table-container"
         >
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column
@@ -846,3 +847,10 @@ function submitForm() {
 getDeptTree();
 getList();
 </script>
+
+<style lang="scss" scoped>
+:deep(.table-container) {
+  height: calc(100vh - 412px);
+  overflow: auto;
+}
+</style>

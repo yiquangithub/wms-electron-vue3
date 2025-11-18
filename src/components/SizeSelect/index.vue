@@ -41,5 +41,6 @@ function handleSetSize(size) {
   font-size: 18px;
   line-height: 50px;
   padding-right: 7px;
+  color: #fff;
 }
 </style>

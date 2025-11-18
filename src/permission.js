@@ -22,7 +22,6 @@ router.beforeEach((to, from, next) => {
       next({ path: '/index' })
       NProgress.done()
     } else if (whiteList.indexOf(to.path) !== -1) {
-      console.log('%c [  ]-26', 'font-size:13px; background:pink; color:#bf2c9f;', 1)
       next()
     } else {
       if (useUserStore().roles.length === 0) {
@@ -50,8 +49,6 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-
-    console.log('%c [  ]-53', 'font-size:13px; background:pink; color:#bf2c9f;', 11)
     // 没有token
     if (whiteList.indexOf(to.path) !== -1) {
       // 在免登录白名单，直接进入

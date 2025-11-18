@@ -6,7 +6,13 @@
         <span class="icon">📊</span>
         智能垂直回转柜监控系统
       </div>
-      <div class="time">{{ currentTime }}</div>
+      <div class="header-actions">
+        <el-button class="home-btn" @click="goToHome">
+          <el-icon><HomeFilled /></el-icon>
+          <span>首页</span>
+        </el-button>
+        <div class="time">{{ currentTime }}</div>
+      </div>
     </div>
 
     <!-- 顶部统计卡片 -->
@@ -103,7 +109,6 @@
                 </div>
               </div>
             </div>
-
             <div class="cabinet-controls">
               <el-button circle icon="ArrowUp" @click="scrollUp"></el-button>
               <el-button
@@ -254,6 +259,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from "vue";
+import { useRouter } from "vue-router";
 import * as echarts from "echarts";
 import {
   Box,
@@ -263,7 +269,11 @@ import {
   Monitor,
   PieChart,
   Bell,
+  HomeFilled,
 } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
+
+const router = useRouter();
 
 // 当前时间
 const currentTime = ref("");
@@ -279,6 +289,11 @@ const updateTime = () => {
     minute: "2-digit",
     second: "2-digit",
   });
+};
+
+// 跳转首页
+const goToHome = () => {
+  router.push("/index");
 };
 
 // 回转柜状态数据（包含详细信息）
@@ -714,7 +729,7 @@ const selectCabinet = (item) => {
 };
 
 const refreshCabinet = () => {
-  console.log("刷新回转柜状态");
+  ElMessage.success("刷新回转柜状态");
 };
 
 const scrollUp = () => {
@@ -734,7 +749,7 @@ const viewAllAlerts = () => {
 };
 
 const handleAlerts = () => {
-  console.log("处理告警");
+  ElMessage.success("正在处理所有告警");
 };
 
 // 生命周期
@@ -797,9 +812,40 @@ onUnmounted(() => {
   font-size: 32px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.home-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  color: #00d9ff;
+  border-radius: 8px;
+  transition: all 0.3s;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.home-btn:hover {
+  background: rgba(0, 217, 255, 0.2);
+  border-color: #00d9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+}
+
+.home-btn .el-icon {
+  font-size: 16px;
+}
+
 .time {
   color: #00d9ff;
-  font-size: 16px;
+  font-size: 28px;
   font-family: "Consolas", monospace;
 }
 
