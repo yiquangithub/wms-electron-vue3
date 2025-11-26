@@ -1329,7 +1329,7 @@ provide("templateConfig", templateConfig);
       }
 
       .tree-container {
-        height: calc(100vh - 170px);
+        height: calc(100vh - 185px);
         background: #fff;
         border-radius: 4px;
         padding: 10px;
@@ -1428,7 +1428,7 @@ provide("templateConfig", templateConfig);
       }
 
       :deep(.table-demo) {
-        height: calc(100vh - 170px);
+        height: calc(100vh - 185px);
       }
     }
   }

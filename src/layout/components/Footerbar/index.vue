@@ -41,7 +41,6 @@
   padding: 12px 24px;
   background: #304156;
   backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(71, 85, 105, 0.5);
   font-size: 16px;
 
   .status-left,

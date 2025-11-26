@@ -4,7 +4,7 @@
     <header class="top-bar">
       <div class="header-left">
         <el-icon class="logo-icon" :size="32"><Goods /></el-icon>
-        <span class="system-title">智能垂直回转柜</span>
+        <span class="system-title">智能垂直回转柜系统</span>
       </div>
       <div class="header-right">
         <div class="time-display">
@@ -36,24 +36,10 @@
       <div class="welcome-section">
         <div class="welcome-content">
           <div class="welcome-left">
-            <h1 class="welcome-title">欢迎使用智能垂直回转柜</h1>
+            <h1 class="welcome-title">欢迎使用智能垂直回转柜系统</h1>
             <p class="welcome-desc">
               请选择以下功能模块进行操作，点击模块图标打开对应功能
             </p>
-            <div class="system-status">
-              <div class="status-item">
-                <span class="status-dot"></span>
-                <span>系统运行正常</span>
-              </div>
-              <div class="status-item">
-                <el-icon><Calendar /></el-icon>
-                <span>今日已处理 156 笔业务</span>
-              </div>
-            </div>
-          </div>
-          <div class="welcome-right">
-            <div class="stat-number">13</div>
-            <div class="stat-label">在库数量</div>
           </div>
         </div>
       </div>
@@ -115,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, markRaw } from "vue";
 import {
   Goods,
   Clock,
@@ -156,51 +142,59 @@ const updateTime = () => {
   });
 };
 
-// 菜单项配置
+// 菜单项配置 - 使用 markRaw 包装组件
 const menuItems = ref([
   {
+    id: 0,
+    icon: markRaw(TrendCharts),
+    title: "大屏展示",
+    desc: "实时监控货柜状态与库存信息",
+    path: "/chart",
+    name: "chart",
+  },
+  {
     id: 1,
-    icon: Setting,
+    icon: markRaw(Setting),
     title: "系统设置",
     desc: "用户账号管理与操作权限控制",
-    path: "/system/user", // 跳转路径
-    name: "System", // 模块路径，用于侧边栏显示
+    path: "/system/user",
+    name: "System",
   },
   {
     id: 2,
-    icon: Lock,
-    title: "安全管理",
-    desc: "用户账号管理与操作权限控制",
-    path: "/system/role",
-    name: "/system",
+    icon: markRaw(Box),
+    title: "物料管理",
+    desc: "物料信息维护与分类编码管理",
+    path: "/base/calculateunit",
+    name: "Base",
   },
   {
     id: 3,
-    icon: Box,
-    title: "物料管理",
-    desc: "物料信息维护与分类编码管理",
-    path: "/material/list",
-    name: "/material",
+    icon: markRaw(Lock),
+    title: "参数管理",
+    desc: "系统参数配置与维护",
+    path: "/parameterManage/baseSetting",
+    name: "ParameterManage",
   },
   {
     id: 4,
-    icon: TrendCharts,
+    icon: markRaw(TrendCharts),
     title: "货柜管理",
     desc: "存储货位划分与状态实时监控",
-    path: "/cabinet/list",
-    name: "/cabinet",
+    path: "/containerManage/containerManageList",
+    name: "ContainerManage",
   },
   {
     id: 5,
-    icon: Upload,
+    icon: markRaw(Upload),
     title: "入库管理",
     desc: "采购到货登记与库位分配操作",
-    path: "/warehouse/inbound",
-    name: "/warehouse",
+    path: "/warehouse/inboundStorage",
+    name: "Warehouse",
   },
   {
     id: 6,
-    icon: Download,
+    icon: markRaw(Download),
     title: "出库管理",
     desc: "查询物料所在库位并出库操作",
     path: "/warehouse/outbound",
@@ -208,7 +202,7 @@ const menuItems = ref([
   },
   {
     id: 7,
-    icon: DataAnalysis,
+    icon: markRaw(DataAnalysis),
     title: "盘点管理",
     desc: "定期库存清点与差异调整处理",
     path: "/warehouse/inventory",
@@ -216,10 +210,10 @@ const menuItems = ref([
   },
   {
     id: 8,
-    icon: Warning,
+    icon: markRaw(Warning),
     title: "警告信息",
     desc: "库存预警与常态实时提醒",
-    path: "/monitor/operlog", // 示例路径
+    path: "/monitor/operlog",
     name: "/monitor",
   },
 ]);
@@ -332,6 +326,7 @@ onUnmounted(() => {
         width: 40px;
         height: 40px;
         border-radius: 10px;
+        margin-right: 8px;
       }
 
       span {
@@ -447,9 +442,15 @@ onUnmounted(() => {
 
 /* Menu Grid */
 .menu-grid {
+  height: calc(100vh - 370px);
+  overflow: auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
+  padding: 10px;
+}
+.menu-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .menu-card {
@@ -525,7 +526,7 @@ onUnmounted(() => {
   background: rgba(15, 23, 42, 0.9);
   backdrop-filter: blur(10px);
   border-top: 1px solid rgba(71, 85, 105, 0.5);
-  font-size: 14px;
+  font-size: 18px;
 
   .status-left,
   .status-right {

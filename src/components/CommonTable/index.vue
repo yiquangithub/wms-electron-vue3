@@ -202,6 +202,22 @@
                 {{ scope.row[item.key] }}
               </el-tag>
             </template>
+            <template v-else-if="item.status === 'anomalyStatus'">
+              <el-tag
+                type="warning"
+                size="large"
+                v-if="scope.row['status'] == '偏载'"
+              >
+                {{ scope.row[item.key] }}
+              </el-tag>
+              <el-tag
+                type="danger"
+                size="large"
+                v-else-if="scope.row['status'] == '过载'"
+              >
+                {{ scope.row[item.key] }}
+              </el-tag>
+            </template>
 
             <!-- 检测结果 -->
             <template v-else-if="item.status === 'checkState'">
@@ -291,13 +307,17 @@
             </template>
           </template>
         </el-table-column>
-        <!-- 备注列顺序处理 -->
+        <!-- 状态处理 -->
         <el-table-column
           prop="remarks"
-          label="备注"
-          v-if="config.isOtherInfo"
+          label="状态"
           width="200"
-        />
+          v-if="config.isStatusConfig"
+        >
+          <template v-slot="scope">
+            <slot name="status" :row="scope.row"></slot>
+          </template>
+        </el-table-column>
         <!-- 操作栏 -->
         <el-table-column
           label="操作"

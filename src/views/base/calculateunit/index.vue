@@ -309,7 +309,7 @@ onMounted(() => {
   padding: 15px;
 
   .table-demo {
-    height: calc(100vh - 170px);
+    height: calc(100vh - 185px);
   }
 }
 </style>

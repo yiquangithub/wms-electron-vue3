@@ -325,7 +325,7 @@ onMounted(() => {
     }
 
     :deep(.table-demo) {
-      height: calc(100vh - 170px);
+      height: calc(100vh - 185px);
     }
   }
 }

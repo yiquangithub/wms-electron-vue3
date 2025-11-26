@@ -53,11 +53,7 @@ const settingsStore = useSettingsStore();
 const permissionStore = usePermissionStore();
 
 const sidebarRouters = computed(() => permissionStore.sidebarRouters);
-console.log(
-  "%c [ sidebarRouters ]-40",
-  "font-size:13px; background:pink; color:#bf2c9f;",
-  sidebarRouters.value
-);
+
 const showLogo = computed(() => settingsStore.sidebarLogo);
 const sideTheme = computed(() => settingsStore.sideTheme);
 const theme = computed(() => settingsStore.theme);

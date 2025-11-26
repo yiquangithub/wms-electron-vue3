@@ -27,10 +27,9 @@ const tagsViewStore = useTagsViewStore();
 <style lang="scss" scoped>
 .app-main {
   /* 50= navbar  50  */
-  height: calc(100vh - 96px);
+  height: calc(100vh - 95px);
   width: 100%;
   position: relative;
-  overflow: auto;
 }
 
 .fixed-header + .app-main {
@@ -40,7 +39,7 @@ const tagsViewStore = useTagsViewStore();
 .hasTagsView {
   .app-main {
     /* 84 = navbar + tags-view = 50 + 34 */
-    height: calc(100vh - 96px);
+    height: calc(100vh - 95px);
   }
 
   .fixed-header + .app-main {

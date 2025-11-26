@@ -74,8 +74,35 @@
 
         <!-- 右侧表格 -->
         <div class="table-wrapper88">
-          <div class="common-tablebox-title blue-title">
-            <span>产品/物料列表</span>
+          <div class="stats-cards">
+            <div class="stats-card">
+              <div class="card-bar bar-blue"></div>
+              <div class="card-content">
+                <div class="card-label">物料种类</div>
+                <div class="card-value">1286</div>
+              </div>
+            </div>
+            <div class="stats-card">
+              <div class="card-bar bar-green"></div>
+              <div class="card-content">
+                <div class="card-label">总库存量</div>
+                <div class="card-value">1286</div>
+              </div>
+            </div>
+            <div class="stats-card">
+              <div class="card-bar bar-orange"></div>
+              <div class="card-content">
+                <div class="card-label">库存预警数</div>
+                <div class="card-value">1286</div>
+              </div>
+            </div>
+            <div class="stats-card">
+              <div class="card-bar bar-red"></div>
+              <div class="card-content">
+                <div class="card-label">缺货物料数</div>
+                <div class="card-value">12</div>
+              </div>
+            </div>
           </div>
           <div class="table-search-container">
             <el-form ref="searchFormRef" :model="searchForm" class="table-form">
@@ -509,7 +536,7 @@ import {
 import CommonTable from "@/components/CommonTable/index.vue";
 import PopoverButton from "@/components/PopoverButton/index.vue";
 import MaterialSelectDialog from "@/components/MaterialSelectDialog/index.vue";
-import ContactSelectDialog from "@/components/ContactSelectDialog.vue";
+import ContactSelectDialog from "@/components/ContactSelectDialog/index.vue";
 import { Search, Plus, Delete, Folder } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -1316,7 +1343,7 @@ mittBus.on("onExcelDataUpdataList", () => {
       }
 
       .tree-container {
-        height: calc(100vh - 185px);
+        height: calc(100vh - 200px);
         background: #fff;
         border-radius: 4px;
         padding: 10px;
@@ -1415,7 +1442,7 @@ mittBus.on("onExcelDataUpdataList", () => {
       }
 
       :deep(.table-demo) {
-        height: calc(100vh - 210px);
+        height: calc(100vh - 315px);
       }
     }
   }
@@ -1452,7 +1479,7 @@ mittBus.on("onExcelDataUpdataList", () => {
   }
 
   :deep(.expand-table) {
-    height: calc(100vh - 210px);
+    height: calc(100vh - 225px);
   }
   .pagination-container1 {
     display: flex;
@@ -1462,5 +1489,76 @@ mittBus.on("onExcelDataUpdataList", () => {
 }
 :deep(.hiderow .el-table__expand-column .el-icon) {
   visibility: hidden;
+}
+
+.stats-cards {
+  display: flex;
+  gap: 20px;
+  margin: 16px 0;
+  flex-wrap: wrap; // 小屏幕自动换行
+
+  .stats-card {
+    flex: 1;
+    min-width: 220px;
+    height: 90px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: translateY(-4px);
+    }
+
+    .card-bar {
+      width: 6px;
+      height: 100%;
+    }
+
+    .bar-blue {
+      background: linear-gradient(to bottom, #409eff, #79bbff);
+    }
+    .bar-green {
+      background: linear-gradient(to bottom, #67c23a, #95d475);
+    }
+    .bar-orange {
+      background: linear-gradient(to bottom, #e6a23c, #f0c27b);
+    }
+    .bar-red {
+      background: linear-gradient(to bottom, #f56c6c, #f89898);
+    }
+
+    .card-content {
+      padding: 0 20px;
+      flex: 1;
+
+      .card-label {
+        font-size: 14px;
+        color: #999;
+        margin-bottom: 8px;
+      }
+
+      .card-value {
+        font-size: 28px;
+        font-weight: bold;
+        color: #303133;
+        line-height: 1;
+      }
+    }
+  }
+}
+
+/* 响应式：超小屏幕时纵向排列 */
+@media (max-width: 768px) {
+  .stats-cards {
+    flex-direction: column;
+
+    .stats-card {
+      min-width: unset;
+    }
+  }
 }
 </style>
