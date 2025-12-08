@@ -1,10 +1,10 @@
 <template>
-  <div class="unit-container layout-padding">
+  <div class="unit-wrapper layout-padding">
     <div class="unit-padding layout-padding-view layout-padding-auto">
       <div class="search-container">
-        <el-form ref="searchFormRef" :model="searchForm" class="table-form">
-          <el-row :gutter="35">
-            <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="5">
+        <el-form ref="searchFormRef" :model="searchForm">
+          <el-row :gutter="20">
+            <el-col :span="4">
               <el-form-item prop="keyword" label="单位名称">
                 <el-input
                   placeholder="请输入单位名称"
@@ -13,14 +13,7 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col
-              :xs="24"
-              :sm="12"
-              :md="8"
-              :lg="6"
-              :xl="5"
-              class="operate-box"
-            >
+            <el-col :span="4">
               <el-form-item>
                 <el-button type="primary" :icon="Plus" @click="addFn"
                   >新增</el-button
@@ -309,7 +302,7 @@ onMounted(() => {
   padding: 15px;
 
   .table-demo {
-    height: calc(100vh - 185px);
+    height: calc(100vh - 175px);
   }
 }
 </style>
