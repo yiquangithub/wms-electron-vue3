@@ -368,23 +368,11 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, computed, reactive } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { InfoFilled, Location, Aim } from "@element-plus/icons-vue";
-
-interface Slot {
-  id: string;
-  weight: number;
-  status: "empty" | "occupied";
-}
-
-interface Floor {
-  name: string;
-  slots: Slot[];
-  overload: number;
-  unbalance: number;
-}
+import { getContainerSummary } from "@/api/containerManage/list.js";
 
 // 移库弹窗数据
 const transferDialog = reactive({
@@ -397,24 +385,24 @@ const transferDialog = reactive({
     maxWeight: "",
     removeWeight: "0",
     removeWeightNum: 0,
-    boxes: [] as any[],
+    boxes: [],
   },
   form: {
-    floor: null as number | null,
-    grid: null as number | null,
-    box: null as number | null,
-    quantity: null as number | null,
+    floor: null,
+    grid: null,
+    box: null,
+    quantity: null,
   },
 });
 
-const floors = ref<Floor[]>([
+const floors = ref([
   { name: "第一层", slots: generateFloor1(), overload: 2, unbalance: 2 },
   { name: "第二层", slots: generateFloor2(), overload: 2, unbalance: 2 },
   { name: "第三层", slots: generateFloor3(), overload: 3, unbalance: 1 },
   { name: "第四层", slots: generateFloor4(), overload: 1, unbalance: 3 },
 ]);
 
-function generateFloor1(): Slot[] {
+function generateFloor1() {
   return [
     { id: "01", weight: 0, status: "empty" },
     { id: "02", weight: 5.7, status: "occupied" },
@@ -439,7 +427,7 @@ function generateFloor1(): Slot[] {
   ];
 }
 
-function generateFloor2(): Slot[] {
+function generateFloor2() {
   return [
     { id: "01", weight: 0, status: "empty" },
     { id: "02", weight: 5.7, status: "occupied" },
@@ -464,7 +452,7 @@ function generateFloor2(): Slot[] {
   ];
 }
 
-function generateFloor3(): Slot[] {
+function generateFloor3() {
   return Array(20)
     .fill(null)
     .map((_, i) => ({
@@ -474,7 +462,7 @@ function generateFloor3(): Slot[] {
     }));
 }
 
-function generateFloor4(): Slot[] {
+function generateFloor4() {
   return Array(20)
     .fill(null)
     .map((_, i) => ({
@@ -510,27 +498,27 @@ const unbalanceCount = computed(
       .filter((s) => s.weight > 5.7 && s.weight <= 7.0).length
 );
 
-const getSlotClass = (slot: Slot) => {
+const getSlotClass = (slot) => {
   if (slot.status === "empty") return "empty";
   if (slot.weight > 7.0) return "overload";
   if (slot.weight > 5.7) return "unbalance";
   return "normal";
 };
 
-const getStateText = (slot: Slot) => {
+const getStateText = (slot) => {
   if (slot.weight > 7) return "过载";
   if (slot.weight > 5.7) return "偏载";
   return "正常负载";
 };
 
-const getStateClass = (slot: Slot) => {
+const getStateClass = (slot) => {
   if (slot.weight > 7) return "danger";
   if (slot.weight > 5.7) return "warning";
   return "success";
 };
 
 // 模拟料盒数据
-const mockBoxes = (slot: Slot) => {
+const mockBoxes = (slot) => {
   if (slot.status === "empty") return [];
   const base = [
     { code: "L1-B1-C1", name: "绝缘材料", qty: 100 },
@@ -541,11 +529,10 @@ const mockBoxes = (slot: Slot) => {
 };
 
 // 提取数字的工具函数
-const parseWeight = (str: string | number) =>
-  parseFloat(String(str).replace("kg", "")) || 0;
+const parseWeight = (str) => parseFloat(String(str).replace("kg", "")) || 0;
 
 // 处理异常按钮点击事件
-const handleFix = (slot: Slot, floorName: string) => {
+const handleFix = (slot, floorName) => {
   const currentVal = parseWeight(slot.weight);
   const maxVal = 6.0; // 最大承重固定为6kg
   const removeVal = Math.max(0, currentVal - maxVal);
