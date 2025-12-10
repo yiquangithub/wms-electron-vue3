@@ -512,7 +512,7 @@
       selectionMode="multiple"
       :defaultSelected="defaultSelected"
     />
-
+    12
     <ContactSelectDialog
       v-model="showContactSelect"
       @confirm="onContactSelect"
